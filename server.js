@@ -12,8 +12,9 @@ const https = require('https');
 const http = require('http');
 
 // Helper to make HTTP/HTTPS requests (compatible across all Node versions)
-function safeFetchJSON(urlStr, options = {}, data = null) {
+function safeFetchJSON(urlStr, options = {}, data = null, redirectCount = 0) {
   return new Promise((resolve, reject) => {
+    if (redirectCount > 5) return reject(new Error('Too many redirects'));
     try {
       const parsedUrl = new URL(urlStr);
       const lib = parsedUrl.protocol === 'https:' ? https : http;
@@ -32,7 +33,7 @@ function safeFetchJSON(urlStr, options = {}, data = null) {
       const req = lib.request(parsedUrl, reqOptions, (res) => {
         // Handle HTTP Redirects
         if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-          return safeFetchJSON(res.headers.location, { method: 'GET' }, null).then(resolve).catch(reject);
+          return safeFetchJSON(res.headers.location, { method: 'GET' }, null, redirectCount + 1).then(resolve).catch(reject);
         }
         
         let body = '';
