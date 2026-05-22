@@ -58,7 +58,7 @@ function safeFetchJSON(urlStr, options = {}, data = null) {
 }
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5555;
 
 // ─── Middleware Setup ──────────────────────────────────────────
 app.use(cors());
