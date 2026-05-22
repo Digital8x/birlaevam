@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Authentication | Birla Evam</title>
+  <link rel="icon" href="/assets/images/logo.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(circle at center, #220a2e 0%, #110317 100%);
+    }
+    .login-card {
+      background: #1a0624;
+      border: 1.5px solid var(--primary);
+      border-radius: var(--radius);
+      padding: 50px 40px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .login-card img {
+      height: 45px;
+      margin-bottom: 25px;
+    }
+    .login-card h2 {
+      font-size: 1.8rem;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .login-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+    }
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      text-align: left;
+    }
+    .error-msg {
+      background: rgba(231, 76, 60, 0.15);
+      border: 1px solid #e74c3c;
+      color: #f5b041;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      display: none;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <img src="/assets/images/logo.png" alt="Birla Evam Logo">
+      <h2>Portal Authentication</h2>
+      <p>Authorized personnel only. Please sign in to access leads database.</p>
+      
+      <div class="error-msg" id="errorMsg">Invalid credentials. Please try again.</div>
+      
+      <form class="login-form" id="loginForm">
+        <div class="form-group">
+          <label for="username">Administrator ID</label>
+          <input type="text" id="username" name="username" placeholder="Enter Username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Security Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter Password" required>
+        </div>
+        <div style="margin-top: 10px;">
+          <button type="submit" class="btn btn--primary" style="width: 100%;">Authenticate &amp; Enter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = document.getElementById('errorMsg');
+      err.style.display = 'none';
+
+      const username = e.target.username.value;
+      const password = e.target.password.value;
+
+      try {
+        const res = await fetch('/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          window.location.href = '/admin';
+        } else {
+          err.textContent = data.message || 'Authentication failed.';
+          err.style.display = 'block';
+        }
+      } catch (err) {
+        err.textContent = 'Server communications error. Please try again.';
+        err.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

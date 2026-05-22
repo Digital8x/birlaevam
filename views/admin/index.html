@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leads &amp; System Dashboard | Birla Evam Admin</title>
+  <link rel="icon" href="/assets/images/logo.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    :root {
+      --bg-dash: #0d0212;
+      --bg-panel: #16061e;
+      --bg-table-header: #210a2e;
+    }
+    body {
+      background: var(--bg-dash);
+      min-height: 100vh;
+      color: #fff;
+    }
+    .dash-header {
+      background: var(--bg-panel);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .dash-header__brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .dash-header__brand img {
+      height: 38px;
+    }
+    .dash-header__brand h1 {
+      font-size: 1.4rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .dash-container {
+      padding: 40px 30px;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .stat-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+    .stat-card__info h3 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+    .stat-card__info p {
+      font-size: 2.2rem;
+      font-family: 'Playfair Display', serif;
+      color: #fff;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .stat-card__icon {
+      font-size: 2.2rem;
+      color: var(--primary);
+      opacity: 0.85;
+    }
+    
+    /* Navigation Tabs */
+    .dash-tabs {
+      display: flex;
+      gap: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 5px;
+    }
+    .dash-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-weight: 600;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .dash-tab-btn.active, .dash-tab-btn:hover {
+      color: var(--primary);
+    }
+    .dash-tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px;
+    }
+
+    .dash-pane {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    .dash-pane.active {
+      display: block;
+    }
+
+    /* Filters / Search Bar */
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      color: #fff;
+      font-size: 0.9rem;
+      width: 320px;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* Leads Table */
+    .table-container {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      box-shadow: var(--shadow);
+    }
+    .leads-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+    .leads-table th {
+      background: var(--bg-table-header);
+      padding: 16px 20px;
+      font-weight: 700;
+      color: var(--primary);
+      border-bottom: 1.5px solid var(--border);
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+    }
+    .leads-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: #dfdaf2;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .leads-table tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+    .leads-table a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+    
+    /* SMTP Config Layout */
+    .smtp-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+    .smtp-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow);
+    }
+    .smtp-card h2 {
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin-bottom: 25px;
+    }
+    .smtp-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .smtp-form .form-group label {
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    
+    /* Toggle switch */
+    .switch-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 10px 0;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: rgba(255,255,255,0.1);
+      transition: .4s;
+      border-radius: 34px;
+      border: 1px solid var(--border);
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--text-secondary);
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: rgba(212,175,55,0.2);
+      border-color: var(--primary);
+    }
+    input:checked + .slider:before {
+      transform: translateX(24px);
+      background-color: var(--primary);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge--source {
+      background: rgba(212,175,55,0.12);
+      color: var(--primary);
+      border: 1px solid rgba(212,175,55,0.3);
+    }
+    .badge--device {
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+    }
+
+    /* Actions buttons */
+    .action-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 6px;
+      transition: color 0.3s ease;
+    }
+    .action-btn:hover {
+      color: #fff;
+    }
+    .action-btn--delete:hover {
+      color: #e74c3c;
+    }
+    .action-btn--restore:hover {
+      color: #2ecc71;
+    }
+
+    .empty-state {
+      padding: 60px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: var(--border);
+    }
+
+    @media(max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .smtp-grid { grid-template-columns: 1fr; }
+    }
+    @media(max-width: 768px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .dash-header { flex-direction: column; gap: 15px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ DASH HEADER ═══ -->
+  <header class="dash-header">
+    <div class="dash-header__brand">
+      <img src="/assets/images/logo.png" alt="Birla Evam Logo">
+      <h1>Dashboard Panel</h1>
+    </div>
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <span style="font-size: 0.85rem; color: var(--text-muted);"><i class="fa-solid fa-user-shield"></i> Administrator</span>
+      <a href="/admin/logout" class="btn btn--dark" style="padding: 10px 20px; font-size: 0.72rem;"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a>
+    </div>
+  </header>
+
+  <!-- ═══ DASH CONTAINER ═══ -->
+  <div class="dash-container">
+    
+    <!-- ─── STATS GRID ─── -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card__info">
+          <h3>Total Leads</h3>
+          <p id="statTotal">0</p>
+        </div>
+        <i class="fa-solid fa-users stat-card__icon"></i>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__info">
+          <h3>Leads Today</h3>
+          <p id="statToday">0</p>
+        </div>
+        <i class="fa-solid fa-calendar-day stat-card__icon"></i>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__info">
+          <h3>Top Source</h3>
+          <p id="statSource" style="font-size: 1.1rem; margin-top: 8px; font-family: inherit;">General Enquiry</p>
+        </div>
+        <i class="fa-solid fa-bullseye stat-card__icon"></i>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__info">
+          <h3>Top Device</h3>
+          <p id="statDevice" style="font-size: 1.1rem; margin-top: 8px; font-family: inherit;">Desktop</p>
+        </div>
+        <i class="fa-solid fa-laptop stat-card__icon"></i>
+      </div>
+    </div>
+
+    <!-- ─── NAVIGATION TABS ─── -->
+    <div class="dash-tabs">
+      <button class="dash-tab-btn active" data-pane="leadsPane"><i class="fa-solid fa-table-list"></i> Active Leads</button>
+      <button class="dash-tab-btn" data-pane="archivePane"><i class="fa-solid fa-trash-can"></i> Archive / Trash</button>
+      <button class="dash-tab-btn" data-pane="smtpPane"><i class="fa-solid fa-envelope-open-text"></i> SMTP Configuration</button>
+    </div>
+
+    <!-- ─── ACTIVE LEADS PANE ─── -->
+    <div class="dash-pane active" id="leadsPane">
+      <div class="controls-row">
+        <input type="text" class="search-input" id="activeSearch" placeholder="🔍 Search leads by name, phone or email...">
+        <button class="btn btn--primary" style="padding: 12px 24px;" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Export CSV Database</button>
+      </div>
+
+      <div class="table-container">
+        <table class="leads-table">
+          <thead>
+            <tr>
+              <th>Submitted (IST)</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Location</th>
+              <th>Form Trigger</th>
+              <th>Device / Browser</th>
+              <th>IP Address</th>
+              <th style="text-align: center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="activeLeadsBody">
+            <!-- Rendered Dynamically -->
+          </tbody>
+        </table>
+        <div class="empty-state" id="activeEmpty" style="display: none;">
+          <i class="fa-solid fa-folder-open"></i>
+          <p>No active real estate leads registered.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── ARCHIVE PANE ─── -->
+    <div class="dash-pane" id="archivePane">
+      <div class="controls-row">
+        <input type="text" class="search-input" id="archiveSearch" placeholder="🔍 Search archive by name, phone or email...">
+        <span style="font-size: 0.85rem; color: var(--text-muted);"><i class="fa-solid fa-circle-info"></i> Leads here are soft-deleted and omitted from exports.</span>
+      </div>
+
+      <div class="table-container">
+        <table class="leads-table">
+          <thead>
+            <tr>
+              <th>Submitted (IST)</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Location</th>
+              <th>Form Trigger</th>
+              <th>Device / Browser</th>
+              <th>IP Address</th>
+              <th style="text-align: center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="archiveLeadsBody">
+            <!-- Rendered Dynamically -->
+          </tbody>
+        </table>
+        <div class="empty-state" id="archiveEmpty" style="display: none;">
+          <i class="fa-solid fa-trash"></i>
+          <p>Archive database is empty.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SMTP CONFIGURATION PANE ─── -->
+    <div class="dash-pane" id="smtpPane">
+      <div class="smtp-grid">
+        <div class="smtp-card">
+          <h2>📧 SMTP Settings Manager</h2>
+          <form class="smtp-form" id="smtpForm">
+            <div class="form-group">
+              <label for="smtpHost">SMTP Host / Server Address</label>
+              <input type="text" id="smtpHost" placeholder="e.g. smtp.gmail.com or mail.domain.com" required>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+              <div class="form-group">
+                <label for="smtpPort">SMTP Port</label>
+                <input type="number" id="smtpPort" placeholder="e.g. 465 or 587" required>
+              </div>
+              <div class="form-group" style="justify-content: flex-end;">
+                <div class="switch-group">
+                  <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Secure SSL/TLS</span>
+                  <label class="switch">
+                    <input type="checkbox" id="smtpSecure" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="smtpUser">SMTP Account Username / Email</label>
+              <input type="email" id="smtpUser" placeholder="e.g. sales@domain.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="smtpPass">SMTP Account Password</label>
+              <input type="password" id="smtpPass" placeholder="••••••••••••" required>
+            </div>
+
+            <div class="form-group">
+              <label for="notifyEmail">Recipient Notification Email Address</label>
+              <input type="email" id="notifyEmail" placeholder="e.g. alerts@domain.com" required>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 15px;">
+              <button type="submit" class="btn btn--primary" style="flex: 1;" id="saveSmtpBtn"><i class="fa-solid fa-floppy-disk"></i> Save SMTP Details</button>
+              <button type="button" class="btn btn--outline" style="flex: 1;" id="testSmtpBtn"><i class="fa-solid fa-paper-plane"></i> Send Test Email</button>
+            </div>
+          </form>
+        </div>
+        
+        <div class="smtp-card" style="border-color: rgba(255,255,255,0.06); background: transparent;">
+          <h2 style="color: var(--white); font-size: 1.3rem;"><i class="fa-solid fa-circle-question" style="color: var(--primary);"></i> How does it work?</h2>
+          <div style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.7; display:flex; flex-direction:column; gap: 15px;">
+            <p>1. <strong>Direct Connection:</strong> Your details are used to instantiate a local NodeMailer Transporter. Lead alerts will be securely channeled through this account.</p>
+            <p>2. <strong>Instant Dynamic Reloading:</strong> Saving the form immediately verifies credentials, updates the database, and reloads the server's transporter in-memory on the fly. No server restarts required!</p>
+            <p>3. <strong>Self-Verification Utility:</strong> Click <strong>Send Test Email</strong> to send a successful link check directly to the recipient address, allowing you to instantly diagnose credentials without logging fake leads.</p>
+            <p>4. <strong>SSL/TLS details:</strong> Generally, utilize port <strong>465</strong> with SSL enabled, or port <strong>587</strong> (TLS) with SSL disabled.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ─── Variables & Dashboard Toggles ──────────────────────────
+    let activeLeads = [];
+    let archiveLeads = [];
+
+    // Tab switcher
+    document.querySelectorAll('.dash-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.dash-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.dash-pane').forEach(p => p.classList.remove('active'));
+        
+        btn.classList.add('active');
+        const target = btn.getAttribute('data-pane');
+        const pane = document.getElementById(target);
+        if (pane) pane.classList.add('active');
+        
+        if (target === 'smtpPane') {
+          loadSMTPConfig();
+        } else {
+          loadLeads();
+        }
+      });
+    });
+
+    // ─── Lead REST Handlers ─────────────────────────────────────
+    async function loadLeads() {
+      try {
+        // Fetch active leads
+        const res1 = await fetch('/api/leads?deleted=false');
+        const data1 = await res1.json();
+        activeLeads = data1.leads || [];
+
+        // Fetch archived leads
+        const res2 = await fetch('/api/leads?deleted=true');
+        const data2 = await res2.json();
+        archiveLeads = data2.leads || [];
+
+        // Fetch stats
+        const resStats = await fetch('/api/leads/stats');
+        const dataStats = await resStats.json();
+        if (dataStats.success) {
+          updateStatsUI(dataStats.stats);
+        }
+
+        renderLeadsTable(activeLeads, 'activeLeadsBody', 'activeEmpty', false);
+        renderLeadsTable(archiveLeads, 'archiveLeadsBody', 'archiveEmpty', true);
+      } catch (err) {
+        showToast('Failed to load lead lists from server.', 'error');
+      }
+    }
+
+    function updateStatsUI(stats) {
+      document.getElementById('statTotal').textContent = stats.total || 0;
+      document.getElementById('statToday').textContent = stats.today || 0;
+      document.getElementById('statSource').textContent = stats.sources[0]?.source_button || '-';
+      document.getElementById('statDevice').textContent = stats.devices[0]?.device || '-';
+    }
+
+    function renderLeadsTable(leads, bodyId, emptyId, isArchive) {
+      const tbody = document.getElementById(bodyId);
+      const empty = document.getElementById(emptyId);
+      tbody.innerHTML = '';
+
+      if (leads.length === 0) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      leads.forEach(l => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span style="font-weight:600; color:#fff;">${l.submitted_at}</span></td>
+          <td><span style="font-weight:700; color:#d4af37;">${l.name}</span></td>
+          <td><a href="tel:${l.phone}" style="font-weight:600;"><i class="fa-solid fa-phone"></i> ${l.phone}</a></td>
+          <td>${l.email ? `<a href="mailto:${l.email}">${l.email}</a>` : '<span style="color:var(--text-muted); italic;">-</span>'}</td>
+          <td><span style="font-weight:500;">${l.city || 'Unknown'}</span>, <span style="font-size:0.8rem; color:var(--text-muted);">${l.country || 'Unknown'}</span></td>
+          <td><span class="badge badge--source">${l.source_button}</span></td>
+          <td><span class="badge badge--device"><i class="${l.device === 'Mobile' ? 'fa-solid fa-mobile-screen' : 'fa-solid fa-laptop'}"></i> ${l.device}</span> <span style="font-size:0.8rem; color:var(--text-muted);">${l.browser}</span></td>
+          <td><span style="font-size:0.8rem; color:var(--text-muted);">${l.ip_address}</span></td>
+          <td style="text-align: center;">
+            ${isArchive ? `
+              <button class="action-btn action-btn--restore" onclick="restoreLead('${l.id}')" title="Restore Lead"><i class="fa-solid fa-rotate-left"></i></button>
+              <button class="action-btn action-btn--delete" onclick="permanentDeleteLead('${l.id}')" title="Permanently Delete"><i class="fa-solid fa-trash-can"></i></button>
+            ` : `
+              <button class="action-btn action-btn--delete" onclick="softDeleteLead('${l.id}')" title="Archive / Delete Lead"><i class="fa-solid fa-trash-can"></i></button>
+            `}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Soft delete
+    async function softDeleteLead(id) {
+      if (!confirm('Are you sure you want to soft-delete this lead? it will be moved to Archive.')) return;
+      try {
+        const res = await fetch(`/api/leads/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message, 'success');
+          loadLeads();
+        } else {
+          showToast(data.message, 'error');
+        }
+      } catch (err) {
+        showToast('Communications failure.', 'error');
+      }
+    }
+
+    // Restore lead
+    async function restoreLead(id) {
+      try {
+        const res = await fetch(`/api/leads/${id}/restore`, { method: 'PATCH' });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message, 'success');
+          loadLeads();
+        } else {
+          showToast(data.message, 'error');
+        }
+      } catch (err) {
+        showToast('Communications failure.', 'error');
+      }
+    }
+
+    // Permanent delete
+    async function permanentDeleteLead(id) {
+      if (!confirm('🚨 WARNING: Are you sure you want to permanently delete this lead? This action is destructive and cannot be undone.')) return;
+      try {
+        const res = await fetch(`/api/leads/${id}/permanent`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message, 'success');
+          loadLeads();
+        } else {
+          showToast(data.message, 'error');
+        }
+      } catch (err) {
+        showToast('Communications failure.', 'error');
+      }
+    }
+
+    // Search filter triggers
+    function setupSearch(inputId, leadsArray, bodyId, emptyId, isArchive) {
+      document.getElementById(inputId).addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        if (!q) {
+          renderLeadsTable(leadsArray, bodyId, emptyId, isArchive);
+          return;
+        }
+        const filtered = leadsArray.filter(l => 
+          l.name.toLowerCase().includes(q) || 
+          l.phone.toLowerCase().includes(q) || 
+          (l.email && l.email.toLowerCase().includes(q))
+        );
+        renderLeadsTable(filtered, bodyId, emptyId, isArchive);
+      });
+    }
+
+    setupSearch('activeSearch', activeLeads, 'activeLeadsBody', 'activeEmpty', false);
+    setupSearch('archiveSearch', archiveLeads, 'archiveLeadsBody', 'archiveEmpty', true);
+
+    function exportCSV() {
+      window.location.href = '/api/leads/export/csv';
+    }
+
+    // ─── SMTP Settings Handlers ─────────────────────────────────
+    async function loadSMTPConfig() {
+      try {
+        const res = await fetch('/api/settings/smtp');
+        const data = await res.json();
+        if (data.success && data.smtp) {
+          document.getElementById('smtpHost').value = data.smtp.host || '';
+          document.getElementById('smtpPort').value = data.smtp.port || 465;
+          document.getElementById('smtpUser').value = data.smtp.user || '';
+          document.getElementById('smtpPass').value = data.smtp.pass || '';
+          document.getElementById('smtpSecure').checked = data.smtp.secure;
+          document.getElementById('notifyEmail').value = data.smtp.notifyEmail || '';
+        }
+      } catch (err) {
+        showToast('Failed to load SMTP details from database.', 'error');
+      }
+    }
+
+    // Save SMTP
+    document.getElementById('smtpForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const saveBtn = document.getElementById('saveSmtpBtn');
+      const origText = saveBtn.innerHTML;
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+      const payload = {
+        host: document.getElementById('smtpHost').value,
+        port: parseInt(document.getElementById('smtpPort').value),
+        user: document.getElementById('smtpUser').value,
+        pass: document.getElementById('smtpPass').value,
+        secure: document.getElementById('smtpSecure').checked,
+        notifyEmail: document.getElementById('notifyEmail').value
+      };
+
+      try {
+        const res = await fetch('/api/settings/smtp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message, 'success');
+          loadSMTPConfig();
+        } else {
+          showToast(data.message, 'error');
+        }
+      } catch (err) {
+        showToast('Failed to update SMTP configurations.', 'error');
+      }
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = origText;
+    });
+
+    // Test SMTP
+    document.getElementById('testSmtpBtn').addEventListener('click', async () => {
+      const testBtn = document.getElementById('testSmtpBtn');
+      const origText = testBtn.innerHTML;
+      testBtn.disabled = true;
+      testBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Testing Connection...';
+
+      const payload = {
+        host: document.getElementById('smtpHost').value,
+        port: parseInt(document.getElementById('smtpPort').value),
+        user: document.getElementById('smtpUser').value,
+        pass: document.getElementById('smtpPass').value,
+        secure: document.getElementById('smtpSecure').checked,
+        notifyEmail: document.getElementById('notifyEmail').value
+      };
+
+      try {
+        const res = await fetch('/api/settings/test-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message, 'success');
+        } else {
+          showToast(data.message, 'error');
+        }
+      } catch (err) {
+        showToast('SMTP Test execution failed. Please verify configurations.', 'error');
+      }
+      testBtn.disabled = false;
+      testBtn.innerHTML = origText;
+    });
+
+    // Load initial leads
+    document.addEventListener('DOMContentLoaded', loadLeads);
+  </script>
+</body>
+</html>

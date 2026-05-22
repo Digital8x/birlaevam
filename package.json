@@ -1,0 +1,21 @@
+{
+  "name": "birla-evam",
+  "version": "1.0.0",
+  "description": "Birla Evam Premium Platform - Pune",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.4.1",
+    "express-session": "^1.19.0",
+    "helmet": "^8.1.0",
+    "mysql2": "^3.22.3",
+    "nodemailer": "^8.0.7",
+    "uuid": "^14.0.0"
+  }
+}

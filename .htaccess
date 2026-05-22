@@ -1,0 +1,50 @@
+# ═══════════════════════════════════════════════
+# BIRLA EVAM — Server Configurations & Protection
+# ═══════════════════════════════════════════════
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # ─── 1. Anti-Hotlinking Protection ──────────────────────────
+  # Block external sites from direct links to valuable renders
+  RewriteCond %{HTTP_REFERER} !^$
+  RewriteCond %{HTTP_REFERER} !^https?://(www\.)?birla-evam\. [NC]
+  RewriteCond %{HTTP_REFERER} !^https?://(www\.)?birla-network\. [NC]
+  RewriteCond %{HTTP_REFERER} !^https?://localhost [NC]
+  RewriteCond %{HTTP_REFERER} !^https?://127\.0\.0\.1 [NC]
+  # Serve forbidden status for assets hotlinked directly
+  RewriteRule \.(jpg|jpeg|png|gif|webp)$ - [F,NC]
+
+  # ─── 2. Canonical Routing fallback (Express handles routing directly)
+  # If request is not a real file or directory, forward to Node.js proxy port if Apache is proxying
+</IfModule>
+
+# ─── 3. Content Caching Policies ──────────────────────────────
+# Accelerates load speed by local browser-caching of assets
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 4 weeks"
+  ExpiresByType image/png "access plus 4 weeks"
+  ExpiresByType image/webp "access plus 4 weeks"
+  ExpiresByType text/css "access plus 1 week"
+  ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# ─── 4. Gzip Deflate Compression ──────────────────────────────
+# Compresses code files to reduce transit latency
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json
+</IfModule>
+
+# ─── 5. Security Header Restrictions ──────────────────────────
+<IfModule mod_headers.c>
+  # Block clickjacking framing attempts
+  Header set X-Frame-Options "SAMEORIGIN"
+  # Block MIMETYPE sniffing
+  Header set X-Content-Type-Options "nosniff"
+  # Force Cross-Site Scripting blocks
+  Header set X-XSS-Protection "1; mode=block"
+</IfModule>
