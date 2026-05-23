@@ -8,13 +8,13 @@
 
   # ─── 1. Anti-Hotlinking Protection ──────────────────────────
   # Block external sites from direct links to valuable renders
-  RewriteCond %{HTTP_REFERER} !^$
-  RewriteCond %{HTTP_REFERER} !^https?://(www\.)?birla-evam\. [NC]
-  RewriteCond %{HTTP_REFERER} !^https?://(www\.)?birla-network\. [NC]
-  RewriteCond %{HTTP_REFERER} !^https?://localhost [NC]
-  RewriteCond %{HTTP_REFERER} !^https?://127\.0\.0\.1 [NC]
+  # RewriteCond %{HTTP_REFERER} !^$
+  # RewriteCond %{HTTP_REFERER} !^https?://(www\.)?birla-evam\. [NC]
+  # RewriteCond %{HTTP_REFERER} !^https?://(www\.)?birla-network\. [NC]
+  # RewriteCond %{HTTP_REFERER} !^https?://localhost [NC]
+  # RewriteCond %{HTTP_REFERER} !^https?://127\.0\.0\.1 [NC]
   # Serve forbidden status for assets hotlinked directly
-  RewriteRule \.(jpg|jpeg|png|gif|webp)$ - [F,NC]
+  # RewriteRule \.(jpg|jpeg|png|gif|webp)$ - [F,NC]
 
   # ─── 2. Canonical Routing fallback (Express handles routing directly)
   # If request is not a real file or directory, forward to Node.js proxy port if Apache is proxying
