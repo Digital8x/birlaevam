@@ -24,7 +24,7 @@
   --text-light: #F6EFF4;     /* Cream Plum for Light Text on Dark Bgs */
   
   --border-light: rgba(134, 31, 105, 0.10);  /* Ultra-thin plum border */
-  --border-dashed: rgba(134, 31, 105, 0.16); /* Dashed Plum Guide border */
+  --border-dashed: transparent; /* Dashed Plum Guide border - user requested to remove box look */
   --border-dark: rgba(255, 255, 255, 0.08);   /* Dark Grid Divider */
   --border-gold: rgba(184, 149, 80, 0.3);
   
@@ -703,17 +703,21 @@ a {
 }
 
 .floorplan__content-pane {
-  display: none;
+  display: grid;
   grid-template-columns: 1.2fr 1fr;
   gap: 60px;
   align-items: center;
   position: relative;
   z-index: 5;
+  margin-bottom: 80px;
+}
+
+.floorplan__content-pane:last-child {
+  margin-bottom: 0;
 }
 
 .floorplan__content-pane.active {
   display: grid;
-  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .floorplan__image-box {
