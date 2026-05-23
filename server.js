@@ -71,20 +71,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Session configuration
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'birla-evam-secret-key-change-this',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 Hours
-}));
-
-// Trust proxy for exact IP tracking behind reverse proxies/Cloudflare
-app.set('trust proxy', 1);
-
-// Admin Auth Middleware
+// Admin Auth Middleware (Stateless Cookie to support cPanel Passenger / PM2 Cluster)
 const isAdmin = (req, res, next) => {
-  if (req.session.authenticated) return next();
+  const cookieHeader = req.headers.cookie || '';
+  const authSecret = process.env.SESSION_SECRET || 'birla-evam-secret-key-change-this';
+  
+  if (cookieHeader.includes(`admin_auth=${authSecret}`)) {
+    return next();
+  }
+  
   if (req.path.startsWith('/api/')) return res.status(401).json({ success: false, message: 'Unauthorized' });
   res.redirect('/admin/login');
 };
@@ -300,9 +295,10 @@ app.post('/admin/login', (req, res) => {
   const { username, password } = req.body;
   const adminUser = process.env.ADMIN_USER || 'admin';
   const adminPass = process.env.ADMIN_PASS || 'BirlaEvam2026';
+  const authSecret = process.env.SESSION_SECRET || 'birla-evam-secret-key-change-this';
 
   if (username === adminUser && password === adminPass) {
-    req.session.authenticated = true;
+    res.setHeader('Set-Cookie', `admin_auth=${authSecret}; Path=/; HttpOnly; Max-Age=86400`);
     res.json({ success: true });
   } else {
     res.status(401).json({ success: false, message: 'Invalid credentials' });
@@ -310,7 +306,7 @@ app.post('/admin/login', (req, res) => {
 });
 
 app.get('/admin/logout', (req, res) => {
-  req.session.destroy();
+  res.setHeader('Set-Cookie', `admin_auth=; Path=/; HttpOnly; Max-Age=0`);
   res.redirect('/admin/login');
 });
 
