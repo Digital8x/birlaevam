@@ -296,7 +296,7 @@ app.get('/admin/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'admin', 'login.html'));
 });
 
-app.post('/admin/login', loginLimiter, (req, res) => {
+app.post('/admin/login', (req, res) => {
   const { username, password } = req.body;
   const adminUser = process.env.ADMIN_USER || 'admin';
   const adminPass = process.env.ADMIN_PASS || 'BirlaEvam2026';
@@ -317,7 +317,7 @@ app.get('/admin/logout', (req, res) => {
 // ─── API Routes ───────────────────────────────────────────────
 
 // Submit a new lead
-app.post('/api/leads', leadLimiter, async (req, res) => {
+app.post('/api/leads', async (req, res) => {
   try {
     const { name, phone, email, source_button, refer_url, city, country, utm_source, utm_medium } = req.body;
 

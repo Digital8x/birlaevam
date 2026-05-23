@@ -1,6 +1,5 @@
 -- Birla Evam Lead Management Database Schema
-CREATE DATABASE IF NOT EXISTS birla_evam;
-USE birla_evam;
+
 
 -- Leads table
 CREATE TABLE IF NOT EXISTS leads (
