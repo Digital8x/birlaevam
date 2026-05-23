@@ -1741,7 +1741,6 @@ a {
   .floorplan__tabs { flex-wrap: wrap; }
   .floorplan__image-box { height: 320px !important; padding: 12px; }
   .floorplan__details { padding: 24px; }
-  .floorplan__details button { display: none; } /* Hide button in pricing section on mobile */
   
   /* Prevent Text Overflows */
   .section-title { font-size: 2.2rem; word-wrap: break-word; }
