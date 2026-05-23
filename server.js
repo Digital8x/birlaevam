@@ -10,6 +10,28 @@ const session = require('express-session');
 const { v4: uuidv4 } = require('uuid');
 const https = require('https');
 const http = require('http');
+const crypto = require('crypto');
+
+// Helper for tokens
+function generateToken(secret) {
+  const payload = Buffer.from(JSON.stringify({ admin: true, exp: Date.now() + 86400000 })).toString('hex');
+  const signature = crypto.createHmac('sha256', secret).update(payload).digest('hex');
+  return `${payload}.${signature}`;
+}
+
+function verifyToken(token, secret) {
+  try {
+    const [payload, signature] = token.split('.');
+    if (!payload || !signature) return false;
+    const expectedSignature = crypto.createHmac('sha256', secret).update(payload).digest('hex');
+    if (signature !== expectedSignature) return false;
+    const decoded = JSON.parse(Buffer.from(payload, 'hex').toString('utf8'));
+    if (Date.now() > decoded.exp) return false;
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
 
 // Helper to make HTTP/HTTPS requests (compatible across all Node versions)
 function safeFetchJSON(urlStr, options = {}, data = null, redirectCount = 0) {
@@ -77,13 +99,15 @@ const isAdmin = (req, res, next) => {
   
   // 1. Check Bearer Token (For API calls)
   const authHeader = req.headers.authorization || '';
-  if (authHeader === `Bearer ${authSecret}`) {
-    return next();
+  if (authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    if (verifyToken(token, authSecret)) return next();
   }
 
   // 2. Check Cookie (Fallback)
   const cookieHeader = req.headers.cookie || '';
-  if (cookieHeader.includes(`admin_auth=${authSecret}`)) {
+  const cookieMatch = cookieHeader.match(/admin_auth=([^;]+)/);
+  if (cookieMatch && verifyToken(cookieMatch[1], authSecret)) {
     return next();
   }
   
@@ -305,8 +329,9 @@ app.post('/admin/login', (req, res) => {
   const authSecret = process.env.SESSION_SECRET || 'birla-evam-secret-key-change-this';
 
   if (username === adminUser && password === adminPass) {
-    res.setHeader('Set-Cookie', `admin_auth=${authSecret}; Path=/; HttpOnly; Max-Age=86400`);
-    res.json({ success: true, token: authSecret });
+    const token = generateToken(authSecret);
+    res.setHeader('Set-Cookie', `admin_auth=${token}; Path=/; HttpOnly; Max-Age=86400`);
+    res.json({ success: true, token });
   } else {
     res.status(401).json({ success: false, message: 'Invalid credentials' });
   }
