@@ -71,11 +71,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Admin Auth Middleware (Stateless Cookie to support cPanel Passenger / PM2 Cluster)
+// Admin Auth Middleware (Stateless Token & Cookie support for extreme caching environments)
 const isAdmin = (req, res, next) => {
-  const cookieHeader = req.headers.cookie || '';
   const authSecret = process.env.SESSION_SECRET || 'birla-evam-secret-key-change-this';
   
+  // 1. Check Bearer Token (For API calls)
+  const authHeader = req.headers.authorization || '';
+  if (authHeader === `Bearer ${authSecret}`) {
+    return next();
+  }
+
+  // 2. Check Cookie (Fallback)
+  const cookieHeader = req.headers.cookie || '';
   if (cookieHeader.includes(`admin_auth=${authSecret}`)) {
     return next();
   }
@@ -299,7 +306,7 @@ app.post('/admin/login', (req, res) => {
 
   if (username === adminUser && password === adminPass) {
     res.setHeader('Set-Cookie', `admin_auth=${authSecret}; Path=/; HttpOnly; Max-Age=86400`);
-    res.json({ success: true });
+    res.json({ success: true, token: authSecret });
   } else {
     res.status(401).json({ success: false, message: 'Invalid credentials' });
   }
@@ -632,8 +639,8 @@ app.post('/api/settings/test-email', isAdmin, async (req, res) => {
 
 // ─── Pages Routing ────────────────────────────────────────────
 
-// Admin panel dashboard
-app.get('/admin', isAdmin, (req, res) => {
+// Admin panel dashboard (SPA - Auth handled by frontend token check & backend API)
+app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'admin', 'index.html'));
 });
 

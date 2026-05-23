@@ -323,6 +323,22 @@
   </style>
 </head>
 <body>
+  <script>
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) window.location.href = '/admin/login';
+
+    // Helper to inject token into all fetches
+    async function authFetch(url, options = {}) {
+      if (!options.headers) options.headers = {};
+      options.headers['Authorization'] = `Bearer ${localStorage.getItem('adminToken')}`;
+      const res = await fetch(url, options);
+      if (res.status === 401) {
+        localStorage.removeItem('adminToken');
+        window.location.href = '/admin/login';
+      }
+      return res;
+    }
+  </script>
 
   <!-- ═══ DASH HEADER ═══ -->
   <header class="dash-header">
@@ -332,7 +348,7 @@
     </div>
     <div style="display: flex; align-items: center; gap: 15px;">
       <span style="font-size: 0.85rem; color: var(--text-muted);"><i class="fa-solid fa-user-shield"></i> Administrator</span>
-      <a href="/admin/logout" class="btn btn--dark" style="padding: 10px 20px; font-size: 0.72rem;"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a>
+      <a href="#" onclick="localStorage.removeItem('adminToken'); window.location.href='/admin/logout';" class="btn btn--dark" style="padding: 10px 20px; font-size: 0.72rem;"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a>
     </div>
   </header>
 
@@ -535,17 +551,17 @@
     async function loadLeads() {
       try {
         // Fetch active leads
-        const res1 = await fetch('/api/leads?deleted=false');
+        const res1 = await authFetch('/api/leads?deleted=false');
         const data1 = await res1.json();
         activeLeads = data1.leads || [];
 
         // Fetch archived leads
-        const res2 = await fetch('/api/leads?deleted=true');
+        const res2 = await authFetch('/api/leads?deleted=true');
         const data2 = await res2.json();
         archiveLeads = data2.leads || [];
 
         // Fetch stats
-        const resStats = await fetch('/api/leads/stats');
+        const resStats = await authFetch('/api/leads/stats');
         const dataStats = await resStats.json();
         if (dataStats.success) {
           updateStatsUI(dataStats.stats);
@@ -604,7 +620,7 @@
     async function softDeleteLead(id) {
       if (!confirm('Are you sure you want to soft-delete this lead? it will be moved to Archive.')) return;
       try {
-        const res = await fetch(`/api/leads/${id}`, { method: 'DELETE' });
+        const res = await authFetch(`/api/leads/${id}`, { method: 'DELETE' });
         const data = await res.json();
         if (data.success) {
           showToast(data.message, 'success');
@@ -620,7 +636,7 @@
     // Restore lead
     async function restoreLead(id) {
       try {
-        const res = await fetch(`/api/leads/${id}/restore`, { method: 'PATCH' });
+        const res = await authFetch(`/api/leads/${id}/restore`, { method: 'PATCH' });
         const data = await res.json();
         if (data.success) {
           showToast(data.message, 'success');
@@ -637,7 +653,7 @@
     async function permanentDeleteLead(id) {
       if (!confirm('🚨 WARNING: Are you sure you want to permanently delete this lead? This action is destructive and cannot be undone.')) return;
       try {
-        const res = await fetch(`/api/leads/${id}/permanent`, { method: 'DELETE' });
+        const res = await authFetch(`/api/leads/${id}/permanent`, { method: 'DELETE' });
         const data = await res.json();
         if (data.success) {
           showToast(data.message, 'success');
@@ -677,7 +693,7 @@
     // ─── SMTP Settings Handlers ─────────────────────────────────
     async function loadSMTPConfig() {
       try {
-        const res = await fetch('/api/settings/smtp');
+        const res = await authFetch('/api/settings/smtp');
         const data = await res.json();
         if (data.success && data.smtp) {
           document.getElementById('smtpHost').value = data.smtp.host || '';
@@ -710,7 +726,7 @@
       };
 
       try {
-        const res = await fetch('/api/settings/smtp', {
+        const res = await authFetch('/api/settings/smtp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -746,7 +762,7 @@
       };
 
       try {
-        const res = await fetch('/api/settings/test-email', {
+        const res = await authFetch('/api/settings/test-email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
