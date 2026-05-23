@@ -551,18 +551,19 @@
     // ─── Lead REST Handlers ─────────────────────────────────────
     async function loadLeads() {
       try {
+        const t = Date.now();
         // Fetch active leads
-        const res1 = await authFetch('/api/leads?deleted=false');
+        const res1 = await authFetch(`/api/leads?deleted=false&_t=${t}`);
         const data1 = await res1.json();
         activeLeads = data1.leads || [];
 
         // Fetch archived leads
-        const res2 = await authFetch('/api/leads?deleted=true');
+        const res2 = await authFetch(`/api/leads?deleted=true&_t=${t}`);
         const data2 = await res2.json();
         archiveLeads = data2.leads || [];
 
         // Fetch stats
-        const resStats = await authFetch('/api/leads/stats');
+        const resStats = await authFetch(`/api/leads/stats?_t=${t}`);
         const dataStats = await resStats.json();
         if (dataStats.success) {
           updateStatsUI(dataStats.stats);
@@ -688,13 +689,14 @@
     setupSearch('archiveSearch', archiveLeads, 'archiveLeadsBody', 'archiveEmpty', true);
 
     function exportCSV() {
-      window.location.href = '/api/leads/export/csv';
+      const token = localStorage.getItem('adminToken');
+      window.location.href = `/api/leads/export/csv?token=${token}`;
     }
 
     // ─── SMTP Settings Handlers ─────────────────────────────────
     async function loadSMTPConfig() {
       try {
-        const res = await authFetch('/api/settings/smtp');
+        const res = await authFetch(`/api/settings/smtp?_t=${Date.now()}`);
         const data = await res.json();
         if (data.success && data.smtp) {
           document.getElementById('smtpHost').value = data.smtp.host || '';

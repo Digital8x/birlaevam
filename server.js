@@ -104,7 +104,13 @@ const isAdmin = (req, res, next) => {
     if (verifyToken(token, authSecret)) return next();
   }
 
-  // 2. Check Cookie (Fallback)
+  // 2. Check Query Parameter (For CSV Exports via window.location.href)
+  const queryToken = req.query.token;
+  if (queryToken && verifyToken(queryToken, authSecret)) {
+    return next();
+  }
+
+  // 3. Check Cookie (Fallback)
   const cookieHeader = req.headers.cookie || '';
   const cookieMatch = cookieHeader.match(/admin_auth=([^;]+)/);
   if (cookieMatch && verifyToken(cookieMatch[1], authSecret)) {
