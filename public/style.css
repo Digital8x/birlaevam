@@ -1739,7 +1739,7 @@ a {
   
   /* Responsive Floorplans and Architecture Images */
   .floorplan__tabs { flex-wrap: wrap; }
-  .floorplan__image-box { height: auto !important; min-height: 280px; padding: 12px; }
+  .floorplan__image-box { height: 320px !important; padding: 12px; }
   .floorplan__details { padding: 24px; }
   .floorplan__details button { display: none; } /* Hide button in pricing section on mobile */
   
