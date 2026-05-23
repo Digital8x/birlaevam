@@ -1,4 +1,15 @@
 -- Birla Evam Lead Management Database Schema
+-- 
+-- PREREQUISITES:
+-- The target database must already exist and be selected before running this script.
+-- This script does not create or switch databases (to support cPanel shared hosting 
+-- and strict permission environments).
+-- 
+-- For CLI usage, provide the database name as a parameter:
+--   mysql -u username -p database_name < schema.sql
+-- 
+-- For CI/CD or IaC pipelines, ensure the database is provisioned and selected 
+-- (e.g., via a prior `USE database_name;` statement) before applying this schema.
 
 
 -- Leads table

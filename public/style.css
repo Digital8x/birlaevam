@@ -1677,7 +1677,7 @@ a {
 }
 
 @media (max-width: 768px) {
-  .section { padding: 80px 0; }
+  .section { padding: 80px 0; overflow-x: hidden; }
   .header { width: calc(100% - 32px); top: 16px; padding: 10px 20px; }
   .header.scrolled { top: 8px; }
   
@@ -1727,10 +1727,27 @@ a {
   .hero__content h1 span { font-size: 2.2rem; }
   .hero__scroll-indicator { display: none; }
   
-  .amenities__grid, .insights__grid { grid-template-columns: 1fr; }
+  /* Fix Hero Building Clipping on Mobile */
+  .hero__building-layer { bottom: -180px; transform: translateX(-50%) scale(1); }
+  .hero__clouds-mask { height: 200px; bottom: 0; }
+  
+  .amenities__grid, .insights__grid { grid-template-columns: 1fr; gap: 20px; }
+  
+  /* Responsive Floorplans and Architecture Images */
   .floorplan__tabs { flex-wrap: wrap; }
+  .floorplan__image-box { height: auto !important; min-height: 280px; padding: 12px; }
+  .floorplan__details { padding: 24px; }
+  .floorplan__details button { display: none; } /* Hide button in pricing section on mobile */
+  
+  /* Prevent Text Overflows */
+  .section-title { font-size: 2.2rem; word-wrap: break-word; }
+  .insight-card__content { padding: 20px; }
+  .faq__wrap { padding: 0 10px; }
+  .faq-item__q { font-size: 0.95rem; line-height: 1.4; gap: 10px; }
+  
   .about__bullets { grid-template-columns: 1fr; }
-  .rera__wrap { flex-direction: column; text-align: center; gap: 20px; }
+  .rera__wrap { flex-direction: column; text-align: center; gap: 20px; padding: 20px; }
+  .location__points { padding: 24px; }
   
   .footer__transitional-inner { justify-content: center; }
   .footer { text-align: center; }
