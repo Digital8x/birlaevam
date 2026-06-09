@@ -412,7 +412,7 @@ a {
 .hero__tagline {
   font-family: var(--font-sans);
   font-size: clamp(0.92rem, 1.8vw, 1.1rem);
-  color: var(--text-muted);
+  color: var(--text-dark);
   max-width: 620px;
   margin: 0 auto 36px;
   font-weight: 300;
@@ -1755,7 +1755,34 @@ a {
   .footer__transitional-inner { justify-content: center; }
   .footer { text-align: center; }
   .footer__brand img { align-self: center; }
-  .footer__bottom { justify-content: center; flex-direction: column; gap: 10px; }
+  .footer__bottom { justify-content: center; flex-direction: column; gap: 10px; padding-bottom: 70px; }
+  
+  /* Mobile Sticky Bottom Action Bar */
+  .floating-cta {
+    bottom: 0;
+    right: 0;
+    left: 0;
+    flex-direction: row;
+    gap: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  .floating-cta__phone, .floating-cta__whatsapp {
+    width: 50%;
+    height: 60px;
+    border-radius: 0;
+    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    gap: 8px;
+    box-shadow: none;
+    border: none;
+  }
+  .floating-cta__phone::after { content: " Call Us"; }
+  .floating-cta__whatsapp::after { content: " WhatsApp"; }
+  .floating-cta__phone:hover, .floating-cta__whatsapp:hover { transform: none; }
 }
 
 /* ═══════════════════════════════════════════════
