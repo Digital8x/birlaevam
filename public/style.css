@@ -122,46 +122,47 @@ a {
   border: none;
   white-space: nowrap;
   gap: 8px;
+  
+  /* Live moving gradient */
+  background: linear-gradient(270deg, #5C1247, #8C6E35, #5C1247);
+  background-size: 200% 200%;
+  animation: btnGradientMove 4s ease infinite;
+  color: #ffffff !important;
+}
+
+@keyframes btnGradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(184, 149, 80, 0.3);
 }
 
 .btn--primary {
-  background: var(--primary);
-  color: #ffffff;
-  border: 1px solid var(--primary);
-  box-shadow: 0 4px 15px rgba(134, 31, 105, 0.1);
+  /* Inherits from .btn */
 }
 
 .btn--primary:hover {
-  background: var(--accent); /* Satin Gold hover match */
-  border-color: var(--accent);
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(184, 149, 80, 0.2);
+  /* Inherits from .btn */
 }
 
 .btn--outline {
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  background: #ffffff; /* Solid white background for perfect readability on light layouts */
+  /* Inherits from .btn */
 }
 
 .btn--outline:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #ffffff;
-  transform: translateY(-2px);
+  /* Inherits from .btn */
 }
 
 .btn--dark {
-  background: var(--bg-dark);
-  color: #ffffff;
-  border: 1px solid var(--bg-dark-accent);
+  /* Inherits from .btn */
 }
 
 .btn--dark:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-  transform: translateY(-2px);
+  /* Inherits from .btn */
 }
 
 /* Minimalist lowercase text links with arrows */
