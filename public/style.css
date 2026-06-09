@@ -361,7 +361,7 @@ a {
 
 .hero__content h1 span {
   display: block;
-  font-size: clamp(2.2rem, 6vw, 4.2rem);
+  font-size: clamp(3.2rem, 8vw, 5.2rem);
   font-style: italic;
   font-weight: 700;
   text-transform: none;
@@ -1708,8 +1708,8 @@ a {
   .hamburger.active span:nth-child(2) { opacity: 0; }
   .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
   
-  .hero__content h1 { font-size: 2.8rem; }
-  .hero__content h1 span { font-size: 2.2rem; }
+  .hero__content h1 { font-size: 2.5rem; }
+  .hero__content h1 span { font-size: 3.5rem; }
   .hero__scroll-indicator { display: none; }
   
   /* Fix Hero Building Clipping on Mobile */
