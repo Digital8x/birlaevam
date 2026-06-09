@@ -122,48 +122,28 @@ a {
   border: none;
   white-space: nowrap;
   gap: 8px;
-  
-  /* Live moving gradient */
-  background: linear-gradient(270deg, #5C1247, #8C6E35, #5C1247);
-  background-size: 200% 200%;
-  animation: btnGradientMove 4s ease infinite;
+  /* Live moving gradient (Shine Effect) */
+  background: linear-gradient(
+    120deg,
+    #5C1247 15%,
+    #8C6E35 40%,
+    #ffffff 50%,
+    #8C6E35 60%,
+    #5C1247 85%
+  );
+  background-size: 200% auto;
+  animation: textShine 4.5s linear infinite;
   color: #ffffff !important;
 }
 
-@keyframes btnGradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
+/* We don't need btnGradientMove anymore as we reuse textShine */
 
 .btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(184, 149, 80, 0.3);
 }
 
-.btn--primary {
-  /* Inherits from .btn */
-}
 
-.btn--primary:hover {
-  /* Inherits from .btn */
-}
-
-.btn--outline {
-  /* Inherits from .btn */
-}
-
-.btn--outline:hover {
-  /* Inherits from .btn */
-}
-
-.btn--dark {
-  /* Inherits from .btn */
-}
-
-.btn--dark:hover {
-  /* Inherits from .btn */
-}
 
 /* Minimalist lowercase text links with arrows */
 .link-editorial {
